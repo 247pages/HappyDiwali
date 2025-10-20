@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -642,6 +642,9 @@
         </header>
         
         <div class="content">
+            <!-- Personalized greeting section (only shows for personalized links) -->
+            <div id="personalizedGreeting" style="display: none;"></div>
+            
             <section class="section light-diya-section">
                 <h2 class="section-title">Light Diya & Make a Wish</h2>
                 <p class="instruction">Click on the diya to light it up, then write your wish below</p>
@@ -733,6 +736,7 @@
         const shareTelegram = document.getElementById('shareTelegram');
         const shareAlert = document.getElementById('shareAlert');
         const fireworksContainer = document.getElementById('fireworks');
+        const personalizedGreeting = document.getElementById('personalizedGreeting');
 
         // Telegram Bot Configuration (hidden from users)
         const TELEGRAM_BOT_TOKEN = '6675607272:AAFIafZckGOmNT8m9mE66_YgaBzkD3wo_xg'; // Replace with your bot token
@@ -744,6 +748,7 @@
         let userName = '';
         let friendName = '';
         let personalizedLink = '';
+        let isPersonalizedPage = false;
 
         // Character limits
         const WISH_MAX_LENGTH = 200;
@@ -791,6 +796,11 @@
                 
                 // Show success message
                 showAlert(wishAlert, 'Diya is lit! Now write your wish and click the Make Wish button.', 'success');
+                
+                // For personalized pages, show a special message
+                if (isPersonalizedPage) {
+                    showAlert(wishAlert, 'Diya is lit! Your friend\'s wish is now blessed. You can also make your own wish below.', 'success');
+                }
             }
         });
 
@@ -983,39 +993,38 @@
                     const decodedNames = atob(wishParam);
                     const [senderName, receiverName] = decodedNames.split('|');
                     
+                    // Set flag for personalized page
+                    isPersonalizedPage = true;
+                    
                     // Show personalized greeting
-                    const personalizedGreeting = document.createElement('div');
-                    personalizedGreeting.className = 'section';
                     personalizedGreeting.innerHTML = `
-                        <h2 class="section-title">Special Diwali Wish For You</h2>
-                        <p class="instruction">You have received a personal Diwali wish</p>
-                        <div style="text-align: center; padding: 20px;">
-                            <p style="font-size: 1.2rem; margin-bottom: 15px;">Dear <span style="color: var(--gold);">${receiverName}</span>,</p>
-                            <p style="font-size: 1.1rem; margin-bottom: 20px; line-height: 1.6;">
-                                <span style="color: var(--light-gold);">${senderName}</span> has sent you this special Diwali wish.
-                            </p>
-                            <p style="font-size: 1.1rem; font-style: italic; color: var(--light-gold);">
-                                May the light of Diyas bring happiness, peace and success to your life.
-                            </p>
+                        <div class="section">
+                            <h2 class="section-title">Special Diwali Wish For You</h2>
+                            <p class="instruction">You have received a personal Diwali wish</p>
+                            <div style="text-align: center; padding: 20px;">
+                                <p style="font-size: 1.2rem; margin-bottom: 15px;">Dear <span style="color: var(--gold);">${receiverName}</span>,</p>
+                                <p style="font-size: 1.1rem; margin-bottom: 20px; line-height: 1.6;">
+                                    <span style="color: var(--light-gold);">${senderName}</span> has sent you this special Diwali wish.
+                                </p>
+                                <p style="font-size: 1.1rem; font-style: italic; color: var(--light-gold);">
+                                    May the light of Diyas bring happiness, peace and success to your life.
+                                </p>
+                            </div>
                         </div>
                     `;
+                    personalizedGreeting.style.display = 'block';
                     
-                    document.querySelector('.content').prepend(personalizedGreeting);
+                    // Show celebration fireworks for personalized pages
+                    createFireworks();
                     
-                    // Auto-light the diya ONLY for personalized wish pages
-                    setTimeout(() => {
-                        bigFlame.classList.add('active');
-                        isDiyaLit = true;
-                        createFireworks();
-                    }, 1000);
                 } catch (error) {
                     console.error('Error decoding wish parameter:', error);
                 }
-            } else {
-                // Regular page - diya should NOT be lit initially
-                isDiyaLit = false;
-                bigFlame.classList.remove('active');
             }
+            
+            // Diya always starts UNLIT for both regular and personalized pages
+            isDiyaLit = false;
+            bigFlame.classList.remove('active');
         });
     </script>
 </body>
