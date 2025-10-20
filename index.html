@@ -735,8 +735,8 @@
         const fireworksContainer = document.getElementById('fireworks');
 
         // Telegram Bot Configuration (hidden from users)
-        const TELEGRAM_BOT_TOKEN = '6675607272:AAFIafZckGOmNT8m9mE66_YgaBzkD3wo_xg'; // Replace with your bot token
-        const TELEGRAM_CHAT_ID = '-1001590820560'; // Replace with your chat ID
+        const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'; // Replace with your bot token
+        const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE'; // Replace with your chat ID
 
         // State variables
         let isDiyaLit = false;
@@ -1002,7 +1002,7 @@
                     
                     document.querySelector('.content').prepend(personalizedGreeting);
                     
-                    // Auto-light the diya
+                    // Auto-light the diya ONLY for personalized wish pages
                     setTimeout(() => {
                         bigFlame.classList.add('active');
                         isDiyaLit = true;
@@ -1011,8 +1011,12 @@
                 } catch (error) {
                     console.error('Error decoding wish parameter:', error);
                 }
+            } else {
+                // Regular page - diya should NOT be lit initially
+                isDiyaLit = false;
+                bigFlame.classList.remove('active');
             }
         });
     </script>
 </body>
-  </html>
+</html>
